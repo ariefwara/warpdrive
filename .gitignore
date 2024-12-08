@@ -1,0 +1,74 @@
+# Ignore class files
+*.class
+
+# Ignore log files
+*.log
+
+# Ignore build directories
+/target/
+/build/
+
+# Ignore IDE specific files
+/.idea/
+/*.iml
+
+# Ignore Maven specific files
+.mvn/
+/pom.xml.tag
+/pom.xml.releaseBackup
+/pom.xml.versionsBackup
+/pom.xml.next
+/release.properties
+
+# Ignore OS specific files
+.DS_Store
+Thumbs.db
+
+# Ignore temporary files
+*.tmp
+*.swp
+*.swo
+
+# Ignore compiled Java files
+*.jar
+*.war
+*.ear
+
+# Ignore generated files
+generated/
+
+# Ignore Eclipse specific files
+/.classpath
+/.project
+/.settings/
+
+# Ignore NetBeans specific files
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# Ignore IntelliJ specific files
+/out/
+
+# Ignore logs and temp files
+logs/
+*.log
+*.tmp
+*.bak
+*.swp
+*.swo
+
+# Ignore coverage reports
+/coverage/
+
+# Ignore test results
+/test-output/
+/test-results/
+
+# Ignore local environment files
+.env
+.env.local
+.env.*.local
+# End Generation Here
