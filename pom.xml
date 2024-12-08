@@ -4,9 +4,102 @@
   <groupId>id.levelapp</groupId>
   <artifactId>warpdrive</artifactId>
   <packaging>jar</packaging>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0.0</version>
   <name>warpdrive</name>
-  <url>http://maven.apache.org</url>
-  <dependencies>
-  </dependencies>
+  <description>Warpdrive is a versatile application designed to operate in 'entry' and 'exit' modes, facilitating HTTP proxy server operations and request forwarding between client connections and target servers.</description>
+  <url>https://github.com/ariefwara/warpdrive</url>  
+  <licenses>
+    <license>
+      <name>MIT License</name>
+      <url>https://opensource.org/licenses/MIT</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <scm>
+    <url>https://github.com/ariefwara/warpdrive</url>
+    <connection>scm:git:git://github.com/ariefwara/warpdrive.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/ariefwara/warpdrive.git</developerConnection>
+  </scm>
+  <developers>
+    <developer>
+      <id>ariefwara</id>
+      <name>Arief Warazuhudien</name>
+      <email>arief.wara@gmail.com</email>
+    </developer>
+  </developers>
+  <build>
+    <plugins>
+        <plugin>
+          <groupId>org.sonatype.central</groupId>
+          <artifactId>central-publishing-maven-plugin</artifactId>
+          <version>0.6.0</version>
+          <extensions>true</extensions>
+          <configuration>
+            <publishingServerId>central</publishingServerId>
+          </configuration>
+        </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>3.2.7</version>
+            <executions>
+                <execution>
+                    <id>sign-artifacts</id>
+                    <phase>verify</phase>
+                    <goals>
+                        <goal>sign</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>3.11.1</version>
+            <executions>
+                <execution>
+                    <id>attach-javadocs</id>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>jar</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <version>3.2.1</version>
+            <executions>
+                <execution>
+                    <id>attach-sources</id>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>jar</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-shade-plugin</artifactId>
+            <version>3.2.4</version>
+            <executions>
+                <execution>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>shade</goal>
+                    </goals>
+                    <configuration>
+                        <transformers>
+                            <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                <mainClass>id.levelapp.Application</mainClass>
+                            </transformer>
+                        </transformers>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+  </build>
 </project>

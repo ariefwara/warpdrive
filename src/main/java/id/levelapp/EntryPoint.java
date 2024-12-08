@@ -4,15 +4,27 @@ import java.io.*;
 import java.net.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+/**
+ * EntryPoint class acts as the entry point for the HTTP proxy server.
+ * It listens for client connections and optionally forwards requests to exit points.
+ */
 public class EntryPoint {
-    private static final int PROXY_PORT = 8010; // Port for clients
-    private static final int EXIT_SERVER_PORT = 1080; // Port for ExitPoints
-    private static final boolean IS_FORWARD = true; // Forward mode: true or false
+    /** Port for clients to connect to the proxy server. */
+    public static int PROXY_PORT = 8010;
+    /** Port for ExitPoints to connect to the proxy server. */
+    public static int EXIT_SERVER_PORT = 1080;
+    /** Forward mode: true if requests should be forwarded to ExitPoints, false for direct connection. */
+    public static boolean IS_FORWARD = true;
 
     private static final ConcurrentLinkedQueue<Socket> exitPoints = new ConcurrentLinkedQueue<>();
     private static int roundRobinIndex = 0;
 
-    public static void main(String[] args) {
+    /**
+     * Starts the HTTP proxy server.
+     * 
+     * @param args Command-line arguments.
+     */
+    public static void start(String[] args) {
         System.out.println("Starting HTTP Proxy on port " + PROXY_PORT);
 
         if (IS_FORWARD) {
@@ -22,6 +34,9 @@ public class EntryPoint {
         new Thread(EntryPoint::listenForClients).start(); // Listen for Clients
     }
 
+    /**
+     * Listens for connections from ExitPoints.
+     */
     private static void listenForExitPoints() {
         try (ServerSocket serverSocket = new ServerSocket(EXIT_SERVER_PORT)) {
             System.out.println("Listening for ExitPoints on port " + EXIT_SERVER_PORT);
@@ -36,6 +51,11 @@ public class EntryPoint {
         }
     }
 
+    /**
+     * Monitors the connection to an ExitPoint and removes it from the list when disconnected.
+     * 
+     * @param socket The socket connection to the ExitPoint.
+     */
     private static void monitorExitPointConnection(Socket socket) {
         try {
             socket.getInputStream().read(); // Block until socket is closed
@@ -44,6 +64,9 @@ public class EntryPoint {
         exitPoints.remove(socket);
     }
 
+    /**
+     * Listens for client connections and handles them using ProxyHandler.
+     */
     private static void listenForClients() {
         try (ServerSocket proxySocket = new ServerSocket(PROXY_PORT)) {
             System.out.println("Listening for Clients on port " + PROXY_PORT);
@@ -56,9 +79,17 @@ public class EntryPoint {
         }
     }
 
+    /**
+     * ProxyHandler class handles individual client connections.
+     */
     static class ProxyHandler implements Runnable {
         private final Socket clientSocket;
 
+        /**
+         * Constructs a ProxyHandler for a given client socket.
+         * 
+         * @param clientSocket The client socket.
+         */
         public ProxyHandler(Socket clientSocket) {
             this.clientSocket = clientSocket;
         }
@@ -95,6 +126,13 @@ public class EntryPoint {
             }
         }
 
+        /**
+         * Connects directly to the target server and forwards data between the client and server.
+         * 
+         * @param target The target server address in the format "host:port".
+         * @param clientInput The input stream from the client.
+         * @param clientOutput The output stream to the client.
+         */
         private void connectDirectly(String target, InputStream clientInput, OutputStream clientOutput) {
             String[] hostPort = target.split(":");
             String host = hostPort[0];
@@ -132,6 +170,13 @@ public class EntryPoint {
             }
         }
 
+        /**
+         * Forwards the client request to an ExitPoint and relays data between the client and ExitPoint.
+         * 
+         * @param target The target server address in the format "host:port".
+         * @param clientInput The input stream from the client.
+         * @param clientOutput The output stream to the client.
+         */
         private void forwardToExitPoint(String target, InputStream clientInput, OutputStream clientOutput) {
             Socket exitSocket = getNextExitPoint();
             if (exitSocket == null) {
@@ -173,6 +218,11 @@ public class EntryPoint {
             }
         }
 
+        /**
+         * Retrieves the next available ExitPoint using a round-robin strategy.
+         * 
+         * @return The next available ExitPoint socket, or null if none are available.
+         */
         private Socket getNextExitPoint() {
             synchronized (exitPoints) {
                 if (exitPoints.isEmpty()) return null;
@@ -190,6 +240,14 @@ public class EntryPoint {
             }
         }
 
+        /**
+         * Forwards data from an input stream to an output stream.
+         * 
+         * @param input The input stream to read data from.
+         * @param output The output stream to write data to.
+         * @param direction A string indicating the direction of data flow for logging purposes.
+         * @throws IOException If an I/O error occurs.
+         */
         private void forwardData(InputStream input, OutputStream output, String direction) throws IOException {
             byte[] buffer = new byte[32768];
             int bytesRead;
